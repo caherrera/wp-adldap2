@@ -7,8 +7,11 @@
  * Author: Carlos Herrera
  * Author URI: https://www.linkedin.com/in/carlosherreracaceres/
  */
-require_once __DIR__ . '/vendor/autoload.php';
+if ( ! is_dir( __DIR__ . '/vendor' ) ) {
+	wp_die( 'must run composer install on ' . __DIR__ . ' folder' );
 
+}
+require_once __DIR__ . '/vendor/autoload.php';
 define( 'WPADLDAP2', 'WPADLDAP2' );
 define( 'WPADLDAP2_DIR', __DIR__ );
 

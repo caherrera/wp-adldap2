@@ -3,8 +3,11 @@
 namespace WpAdldap2\Migrators;
 
 use Adldap\Connections\ProviderInterface;
+use Adldap\Models\User as AdUser;
+use WP_User;
 use WP_User_Query;
 use WpAdldap2\Settings;
+use WpAdldap2\UserProfile;
 use WpAdldap2\WpAdldap2;
 
 class LdapToWp {
@@ -13,13 +16,52 @@ class LdapToWp {
 	private $ad;
 	private $map;
 	private $conditions;
+	private $xprofile_fields;
+
+	/**
+	 * @return mixed
+	 */
+	public function getXprofileFields() {
+		return $this->xprofile_fields;
+	}
+
+	/**
+	 * @param mixed $xprofile_fields
+	 *
+	 * @return LdapToWp
+	 */
+	public function setXprofileFields( $xprofile_fields ) {
+		$this->xprofile_fields = $xprofile_fields;
+
+		return $this;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getWpFields() {
+		return $this->wp_fields;
+	}
+
+	/**
+	 * @param mixed $wp_fields
+	 *
+	 * @return LdapToWp
+	 */
+	public function setWpFields( $wp_fields ) {
+		$this->wp_fields = $wp_fields;
+
+		return $this;
+	}
+	private $wp_fields;
 
 	public function __construct() {
 		$this
 			->setAd( $ad = new WpAdldap2() )
 			->setProvider( $ad->connect() )
 			->setMap( Settings::getMap() )
-			->setConditions( Settings::getBasedn() );
+			->setConditions( Settings::getBasedn() )
+			->setXprofileFields(UserProfile);
 
 	}
 
@@ -49,10 +91,6 @@ class LdapToWp {
 			$found = $this->searchNewUsers();
 			$this->addNewUsers( $found );
 		}
-
-	}
-
-	public function addNewUsers() {
 
 	}
 
@@ -116,6 +154,11 @@ class LdapToWp {
 		} );
 
 		return $founds;
+	}
+
+	public function addNewUsers( AdUser $original ) {
+		$wp_user = new WP_User();
+
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 
-namespace WpAdldap2\Admin;
+namespace WpAdldap2\Admin\Helpers;
 
 class HtmlTab extends HtmlForm {
 

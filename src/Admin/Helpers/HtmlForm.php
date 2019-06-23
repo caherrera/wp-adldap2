@@ -1,6 +1,6 @@
 <?php
 
-namespace WpAdldap2\Admin;
+namespace WpAdldap2\Admin\Helpers;
 
 /**
  * Class HtmlForm
@@ -12,25 +12,14 @@ class HtmlForm {
 
 	protected $_html = [];
 
-	public function __construct( $html = [] ) {
-		if ( is_array( $html ) ) {
-			$this->_html = $html;
-		} elseif ( is_string( $html ) ) {
-			$this->_html = [ $html ];
+	public function __construct( $attr = [], $content = [] ) {
+		if ( $content ) {
+			$this->_html = $this->wrap( $content, 'div', $attr );
+		} elseif ( is_array( $attr ) ) {
+			$this->_html = (array) $attr;
+		} elseif ( is_string( $attr ) ) {
+			$this->_html = [ $attr ];
 		}
-	}
-
-	public function title( $title ) {
-		return "<h2>$title</h2>";
-	}
-
-	public function subtitle( $title ) {
-		return "<h3>$title</h3>";
-	}
-
-
-	public function table( $rows = [] ) {
-		return $this->wrap( $rows, 'table', [ 'class' => 'form-table' ] );
 	}
 
 	public function wrap( $content, $tag = 'div', $attr = [] ) {
@@ -49,6 +38,18 @@ class HtmlForm {
 		$arr = implode( " ", $arr );
 
 		return $arr;
+	}
+
+	public function title( $title ) {
+		return "<h2>$title</h2>";
+	}
+
+	public function subtitle( $title ) {
+		return "<h3>$title</h3>";
+	}
+
+	public function table( $rows = [] ) {
+		return $this->wrap( $rows, 'table', [ 'class' => 'form-table' ] );
 	}
 
 	public function inputSetting( $name, $title, $value, $default ) {

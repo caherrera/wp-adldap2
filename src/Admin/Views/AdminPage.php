@@ -1,14 +1,18 @@
 <?php
 
-namespace WpAdldap2\Admin;
+namespace WpAdldap2\Admin\Views;
+
+use WpAdldap2\Admin\Helpers\HtmlForm;
+use WpAdldap2\Admin\Helpers\HtmlTab;
+
 
 class AdminPage extends HtmlForm {
 
 	protected $_html = [];
 
-	public function __construct( $html = [] ) {
-		if ( $html ) {
-			parent::__construct( $html );
+	public function __construct( $attr = [], $content = [] ) {
+		if ( $content ) {
+			parent::__construct( $attr, $content );
 		} else {
 			$this->add( $this->page( [
 				$this->title( 'WP-ADLDAP2' ),

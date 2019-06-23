@@ -1,8 +1,10 @@
 <?php
 
-namespace WpAdldap2\Admin;
+namespace WpAdldap2\Admin\Views;
 
 use WpAdldap2\Settings;
+use WpAdldap2\UserProfile;
+use WpAdldap2\Admin\Helpers\HtmlForm;
 
 class AdminForm extends HtmlForm {
 
@@ -35,7 +37,7 @@ class AdminForm extends HtmlForm {
 
 			return $this->inputSetting( Settings::getConfigNameOfMap() . "[$name]", $name, Settings::getADField( $name ), '' );
 
-		}, AdminSettings::getUserFields() ) );
+		}, (new UserProfile)->getUserFields() ) );
 	}
 
 	public function printLdapFilters() {
