@@ -32,6 +32,7 @@ class AdminPage extends HtmlForm {
 			new HtmlTab( 'LDAP Account', ( new AdminForm() )->printLdapSettings() ),
 			new HtmlTab( 'Filters', ( new AdminForm() )->printLdapFilters() ),
 			new HtmlTab( 'Fields to Sync', ( new AdminForm() )->printFieldsToSync() ),
+			new HtmlTab( 'Fields to Match', ( new AdminForm() )->printFieldsToMatch() ),
 		];
 
 		$ul   = array_map( function ( HtmlTab $tab ) {

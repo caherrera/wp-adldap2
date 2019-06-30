@@ -9,7 +9,6 @@ trait TraitHasFactory {
 		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
-		self::$instance->settingsPage();
 
 		return self::$instance;
 	}

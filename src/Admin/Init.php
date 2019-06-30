@@ -45,7 +45,9 @@ class Init {
 	}
 
 	public function menu() {
-		add_menu_page( self::ADLDAP2, self::ADLDAP2, 'edit_users', self::ADLDAP2, [ AdminSettings::class, 'factory' ] );
+
+		add_menu_page( self::ADLDAP2, self::ADLDAP2, 'edit_users', self::ADLDAP2, [ AdminSettings::factory(), 'settingsPage' ] );
+		add_submenu_page( self::ADLDAP2, 'Explore List', 'Explore List', 'edit_users', self::ADLDAP2 . '_Explore', [ AdminExploreLdap::factory(), 'settingsPage' ] );
 	}
 
 

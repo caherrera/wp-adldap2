@@ -2,9 +2,9 @@
 
 namespace WpAdldap2\Admin\Views;
 
+use WpAdldap2\Admin\Helpers\HtmlForm;
 use WpAdldap2\Settings;
 use WpAdldap2\UserProfile;
-use WpAdldap2\Admin\Helpers\HtmlForm;
 
 class AdminForm extends HtmlForm {
 
@@ -25,6 +25,7 @@ class AdminForm extends HtmlForm {
 			$this->inputSetting( Settings::getConfigNameOfHosts() . '[2]', 'Host 3', isset( $hosts[2] ) ? $hosts[2] : '', '' ),
 			$this->inputSetting( Settings::getConfigNameOfHosts() . '[3]', 'Host 4', isset( $hosts[3] ) ? $hosts[3] : '', '' ),
 
+			$this->inputSetting( Settings::getConfigNameOfPort(), 'Port', Settings::getPort(), '' ),
 			$this->inputSetting( Settings::getConfigNameOfUsername(), 'Username', Settings::getUsername(), '' ),
 			$this->inputSetting( Settings::getConfigNameOfPassword(), 'Password', Settings::getPassword(), '' ),
 		] );
@@ -37,7 +38,27 @@ class AdminForm extends HtmlForm {
 
 			return $this->inputSetting( Settings::getConfigNameOfMap() . "[$name]", $name, Settings::getADField( $name ), '' );
 
-		}, (new UserProfile)->getUserFields() ) );
+		}, ( new UserProfile )->getUserFields() ) );
+	}
+
+	public function printFieldsToMatch() {
+		$match = (array) Settings::getMatch();
+
+		return $this->table( [
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[0][Ldap]', 'Ldap 1', isset( $match[0][0] ) ? $match[0]['Ldap'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[0][wp]', 'Wp 1', isset( $match[0][0] ) ? $match[0]['wp'] : '', '' ),
+
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[1][Ldap]', 'Ldap 2', isset( $match[1][0] ) ? $match[1]['Ldap'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[1][wp]', 'Wp 2', isset( $match[1][0] ) ? $match[1]['wp'] : '', '' ),
+
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[2][Ldap]', 'Ldap 3', isset( $match[2][0] ) ? $match[2]['Ldap'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[2][wp]', 'Wp 3', isset( $match[2][0] ) ? $match[2]['wp'] : '', '' ),
+
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[3][Ldap]', 'Ldap 4', isset( $match[3][0] ) ? $match[3]['Ldap'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[3][wp]', 'Wp 4', isset( $match[3][0] ) ? $match[3]['wp'] : '', '' ),
+
+
+		] );
 	}
 
 	public function printLdapFilters() {

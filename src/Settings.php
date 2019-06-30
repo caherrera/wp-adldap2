@@ -12,7 +12,9 @@ class Settings {
 	const CONFIG_BASEDN = 'base_dn';
 	const CONFIG_USERNAME = 'username';
 	const CONFIG_PASSWORD = 'password';
+	const CONFIG_PORT = 'port';
 	const MAP = 'map';
+	const MATCH = 'match';
 
 
 	public static function getHosts() {
@@ -22,6 +24,15 @@ class Settings {
 	public static function getConfigNameOfHosts() {
 		return WPADLDAP2 . '_' . Settings::CONFIG_HOSTS;
 	}
+
+	public static function getMatch() {
+		return get_option( static::getConfigNameOfMatch() );
+	}
+
+	public static function getConfigNameOfMatch() {
+		return WPADLDAP2 . '_' . Settings::MATCH;
+	}
+
 
 	public static function getBasedn() {
 		return get_option( static::getConfigNameOfBasedn() );
@@ -34,9 +45,16 @@ class Settings {
 	public static function getUsername() {
 		return get_option( static::getConfigNameOfUsername() );
 	}
+	public static function getPort() {
+		return get_option( static::getConfigNameOfPort() );
+	}
 
 	public static function getConfigNameOfUsername() {
 		return WPADLDAP2 . '_' . Settings::CONFIG_USERNAME;
+	}
+
+	public static function getConfigNameOfPort() {
+		return WPADLDAP2 . '_' . Settings::CONFIG_PORT;
 	}
 
 	public static function getPassword() {

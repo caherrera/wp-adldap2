@@ -5,6 +5,12 @@ namespace WpAdldap2;
 use BP_XProfile_Group;
 use WpAdldap2\Traits\TraitHasFactory;
 
+/**
+ * Class UserProfile
+ *
+ * @package WpAdldap2
+ * @method static UserProfile factory
+ */
 class UserProfile {
 	use TraitHasFactory;
 
