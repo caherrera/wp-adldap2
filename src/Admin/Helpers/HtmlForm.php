@@ -7,6 +7,8 @@ namespace WpAdldap2\Admin\Helpers;
  *
  * @package WpAdldap2\Admin
  * @method HtmlForm p( $content, Array $attr = [] )
+ * @method HtmlForm td( $content, Array $attr = [] )
+ * @method HtmlForm th( $content, Array $attr = [] )
  */
 class HtmlForm {
 
@@ -51,6 +53,12 @@ class HtmlForm {
 	public function table( $rows = [] ) {
 		return $this->wrap( $rows, 'table', [ 'class' => 'form-table' ] );
 	}
+
+	public function row( $row = [] ) {
+		return $this->wrap( $row, 'tr' );
+	}
+
+
 
 	public function inputSetting( $name, $title, $value, $default ) {
 		$html = sprintf( "<tr class=\"form-field\"><th scope=\"row\"><label>%s</label></th>", $title );
