@@ -6,7 +6,7 @@ use WpAdldap2\Admin\Helpers\HtmlForm;
 use WpAdldap2\Migrators\LdapToWp;
 
 
-class AdminPageExploreLdap extends HtmlForm {
+class AdminPageTestConn extends HtmlForm {
 
 	protected $_html = [];
 
@@ -15,7 +15,7 @@ class AdminPageExploreLdap extends HtmlForm {
 			parent::__construct( $attr, $content );
 		} else {
 			$this->add( $this->page( [
-				$this->title( 'Explore Ldap' ),
+				$this->title( 'Test Connection' ),
 
 			] ) );
 		}
@@ -25,6 +25,7 @@ class AdminPageExploreLdap extends HtmlForm {
 	public function page( $html ) {
 		return $this->wrap( 'list', 'div', [ 'class' => 'wrap' ] );
 	}
+
 
 
 

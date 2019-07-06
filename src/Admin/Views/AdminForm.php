@@ -45,30 +45,28 @@ class AdminForm extends HtmlForm {
 		$match = (array) Settings::getMatch();
 
 		return $this->table( [
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[0][Ldap]', 'Ldap 1', isset( $match[0][0] ) ? $match[0]['Ldap'] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[0][wp]', 'Wp 1', isset( $match[0][0] ) ? $match[0]['wp'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[0][Ldap]', 'Ldap 1', isset( $match[0]['Ldap'] ) ? $match[0]['Ldap'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[0][wp]', 'Wp 1', isset( $match[0]['wp'] ) ? $match[0]['wp'] : '', '' ),
 
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[1][Ldap]', 'Ldap 2', isset( $match[1][0] ) ? $match[1]['Ldap'] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[1][wp]', 'Wp 2', isset( $match[1][0] ) ? $match[1]['wp'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[1][Ldap]', 'Ldap 2', isset( $match[1]['Ldap'] ) ? $match[1]['Ldap'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[1][wp]', 'Wp 2', isset( $match[1]['wp'] ) ? $match[1]['wp'] : '', '' ),
 
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[2][Ldap]', 'Ldap 3', isset( $match[2][0] ) ? $match[2]['Ldap'] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[2][wp]', 'Wp 3', isset( $match[2][0] ) ? $match[2]['wp'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[2][Ldap]', 'Ldap 3', isset( $match[2]['Ldap'] ) ? $match[2]['Ldap'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[2][wp]', 'Wp 3', isset( $match[2]['wp'] ) ? $match[2]['wp'] : '', '' ),
 
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[3][Ldap]', 'Ldap 4', isset( $match[3][0] ) ? $match[3]['Ldap'] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[3][wp]', 'Wp 4', isset( $match[3][0] ) ? $match[3]['wp'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[3][Ldap]', 'Ldap 4', isset( $match[3]['Ldap'] ) ? $match[3]['Ldap'] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfMatch() . '[3][wp]', 'Wp 4', isset( $match[3]['wp'] ) ? $match[3]['wp'] : '', '' ),
 
 
 		] );
 	}
 
 	public function printLdapFilters() {
-		$basedn = (array) Settings::getBasedn();
+		$basedn = Settings::getBasedn();
 
 		return $this->table( [
-			$this->inputSetting( Settings::getConfigNameOfBasedn() . '[0]', 'Filter 1', isset( $basedn[0] ) ? $basedn[0] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfBasedn() . '[1]', 'Filter 2', isset( $basedn[1] ) ? $basedn[1] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfBasedn() . '[2]', 'Filter 3', isset( $basedn[2] ) ? $basedn[2] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfBasedn() . '[3]', 'Filter 4', isset( $basedn[3] ) ? $basedn[3] : '', '' ),
+			$this->inputSetting( Settings::getConfigNameOfBasedn(), 'Base dn', $basedn  ?: '', '' ),
+
 
 		] );
 	}

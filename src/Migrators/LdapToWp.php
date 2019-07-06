@@ -16,7 +16,6 @@ class LdapToWp {
 	private $provider;
 	private $ad;
 	private $map;
-	private $conditions;
 	private $xprofile_fields;
 	private $wp_fields;
 	private $match;
@@ -27,7 +26,6 @@ class LdapToWp {
 			->setAd( $ad = new WpAdldap2() )
 			->setProvider( $ad->connect() )
 			->setMap( Settings::getMap() )
-			->setConditions( Settings::getBasedn() )
 			->setXprofileFields( $up->xprofile_fetch_fields() )
 			->setWpFields( $up->getUserFields() )
 			->setMatch( Settings::getMatch() );
@@ -47,12 +45,9 @@ class LdapToWp {
 	}
 
 	public function getUsersFromLdap() {
-		$query = $this->getProvider()->search();
-		foreach ( $this->getConditions() as $condition ) {
-			$condition = explode( '=', $condition );
-			$query     = $query->where( $condition[0], '=', $condition[1] );
-		}
-		$results = $query->all();
+		$query = $this->getProvider()->search()->users();
+
+		$results = $query->get();
 
 		return $results;
 	}
@@ -75,23 +70,6 @@ class LdapToWp {
 		return $this;
 	}
 
-	/**
-	 * @return mixed
-	 */
-	public function getConditions() {
-		return $this->conditions;
-	}
-
-	/**
-	 * @param mixed $conditions
-	 *
-	 * @return LdapToWp
-	 */
-	public function setConditions( $conditions ) {
-		$this->conditions = $conditions;
-
-		return $this;
-	}
 
 	public function getUsersFromWp() {
 		$users       = new WP_User_Query();

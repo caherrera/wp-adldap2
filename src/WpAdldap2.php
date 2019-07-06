@@ -41,4 +41,6 @@ class WpAdldap2 extends Adldap {
 		$this->addProvider( $config );
 	}
 
+
+
 }
