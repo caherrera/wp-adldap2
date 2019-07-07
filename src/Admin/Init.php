@@ -3,6 +3,7 @@
 
 namespace WpAdldap2\Admin;
 
+use WpAdldap2\Migrators\LdapToWp;
 use WpAdldap2\Settings;
 
 class Init {
@@ -21,6 +22,7 @@ class Init {
 			add_action( 'admin_menu', [ $this, 'menu' ] );
 			add_action( 'admin_init', [ $this, 'registerSettings' ] );
 		}
+		add_action( 'sync_from_ldap', [ $this, 'ldapToWp' ] );
 
 	}
 
@@ -33,6 +35,11 @@ class Init {
 		}
 
 		return self::$instance;
+	}
+
+	public function ldapToWp() {
+		$migrate = new LdapToWp();
+		$migrate->sync();
 	}
 
 	public function registerSettings() {

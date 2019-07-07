@@ -42,20 +42,12 @@ class AdminForm extends HtmlForm {
 	}
 
 	public function printFieldsToMatch() {
-		$match = (array) Settings::getMatch();
+		$match   = (array) Settings::getMatch();
+		$filters = (array) Settings::getFilters();
 
 		return $this->table( [
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[0][Ldap]', 'Ldap 1', isset( $match[0]['Ldap'] ) ? $match[0]['Ldap'] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[0][wp]', 'Wp 1', isset( $match[0]['wp'] ) ? $match[0]['wp'] : '', '' ),
-
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[1][Ldap]', 'Ldap 2', isset( $match[1]['Ldap'] ) ? $match[1]['Ldap'] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[1][wp]', 'Wp 2', isset( $match[1]['wp'] ) ? $match[1]['wp'] : '', '' ),
-
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[2][Ldap]', 'Ldap 3', isset( $match[2]['Ldap'] ) ? $match[2]['Ldap'] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[2][wp]', 'Wp 3', isset( $match[2]['wp'] ) ? $match[2]['wp'] : '', '' ),
-
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[3][Ldap]', 'Ldap 4', isset( $match[3]['Ldap'] ) ? $match[3]['Ldap'] : '', '' ),
-			$this->inputSetting( Settings::getConfigNameOfMatch() . '[3][wp]', 'Wp 4', isset( $match[3]['wp'] ) ? $match[3]['wp'] : '', '' ),
+			$this->inputMultiples( Settings::getConfigNameOfFilters(), "Match", $match, [ 'Ldap' => '', 'wp' => '' ] ),
+			$this->inputMultiples( Settings::getConfigNameOfFilters(), "Extra Conditions", $filters, [ 'field' => '', 'operator' => '', 'value' => '' ] )
 
 
 		] );
@@ -63,12 +55,23 @@ class AdminForm extends HtmlForm {
 
 	public function printLdapFilters() {
 		$basedn = Settings::getBasedn();
+		$expire = Settings::getCacheExpire();
+		$dns    = (array) Settings::getDn();
 
-		return $this->table( [
-			$this->inputSetting( Settings::getConfigNameOfBasedn(), 'Base dn', $basedn  ?: '', '' ),
+
+		$rows = [
+			$this->inputSetting( Settings::getConfigNameOfCacheExpire(), 'Cache Expire time in Seconds', $expire ?: '', '3600' ),
+			$this->inputSetting( Settings::getConfigNameOfBasedn(), 'Base dn', $basedn ?: '', '' ),
+
+		];
+		for ( $i = 0; $i < 4; $i ++ ) {
+			$dn     = $dns[ $i ] ?? '';
+			$rows[] = $this->inputSetting( Settings::getConfigNameOfDn() . '[' . $i . ']', 'DN ' . ( $i + 1 ), $dn, '' );
+
+		}
 
 
-		] );
+		return $this->table( $rows );
 	}
 
 

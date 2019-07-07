@@ -15,6 +15,9 @@ class Settings {
 	const CONFIG_PORT = 'port';
 	const MAP = 'map';
 	const MATCH = 'match';
+	const FILTERS = 'filters';
+	const DN = 'dn';
+	const CACHE_EXPIRE = 'cache_expire';
 
 
 	public static function getHosts() {
@@ -24,6 +27,32 @@ class Settings {
 	public static function getConfigNameOfHosts() {
 		return WPADLDAP2 . '_' . Settings::CONFIG_HOSTS;
 	}
+
+
+	public static function getFilters() {
+		return get_option( static::getConfigNameOfFilters() );
+	}
+
+	public static function getConfigNameOfFilters() {
+		return WPADLDAP2 . '_' . Settings::FILTERS;
+	}
+
+	public static function getDn() {
+		return get_option( static::getConfigNameOfDn() );
+	}
+
+	public static function getConfigNameOfDn() {
+		return WPADLDAP2 . '_' . Settings::DN;
+	}
+
+	public static function getCacheExpire() {
+		return get_option( static::getConfigNameOfCacheExpire() );
+	}
+
+	public static function getConfigNameOfCacheExpire() {
+		return WPADLDAP2 . '_' . Settings::CACHE_EXPIRE;
+	}
+
 
 	public static function getMatch() {
 		return get_option( static::getConfigNameOfMatch() );
@@ -45,12 +74,13 @@ class Settings {
 	public static function getUsername() {
 		return get_option( static::getConfigNameOfUsername() );
 	}
-	public static function getPort() {
-		return get_option( static::getConfigNameOfPort() );
-	}
 
 	public static function getConfigNameOfUsername() {
 		return WPADLDAP2 . '_' . Settings::CONFIG_USERNAME;
+	}
+
+	public static function getPort() {
+		return get_option( static::getConfigNameOfPort() );
 	}
 
 	public static function getConfigNameOfPort() {

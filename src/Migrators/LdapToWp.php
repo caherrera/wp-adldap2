@@ -19,6 +19,8 @@ class LdapToWp {
 	private $xprofile_fields;
 	private $wp_fields;
 	private $match;
+	private $filters;
+	private $dn;
 
 	public function __construct() {
 		$up = UserProfile::factory();
@@ -28,7 +30,9 @@ class LdapToWp {
 			->setMap( Settings::getMap() )
 			->setXprofileFields( $up->xprofile_fetch_fields() )
 			->setWpFields( $up->getUserFields() )
-			->setMatch( Settings::getMatch() );
+			->setMatch( Settings::getMatch() )
+			->setDn( Settings::getDn() )
+			->setFilters( Settings::getFilters() );
 
 	}
 
@@ -44,12 +48,70 @@ class LdapToWp {
 
 	}
 
+	/**
+	 * @return \Adldap\Query\Collection
+	 */
 	public function getUsersFromLdap() {
-		$query = $this->getProvider()->search()->users();
 
-		$results = $query->get();
+		$dn      = array_reverse( array_filter( $this->getDn() ) );
+		$filters = ( array_filter( $this->getFilters() ) );
+
+
+		if ( ! $results = wp_cache_get( 'users', WPADLDAP2 ) ) {
+			$query = $this->getProvider()->search()->users();
+			$dn[]  = $query->getDn();
+			$dn    = implode( ',', $dn );
+			$query = $query->setDn( $dn );
+
+			foreach ( array_filter( $filters ) as $filter ) {
+				$filter = wp_parse_args( $filter, [ 'field' => null, 'operator' => null, 'value' => null ] );
+				if ( $filter['operator'] ) {
+					$query = $query->where( $filter['field'], $filter['operator'], $filter['value'] );
+				}
+			}
+
+			$resultss = $query->get();
+			wp_cache_set( 'users', $results, WPADLDAP2, Settings::getCacheExpire() );
+		}
+
 
 		return $results;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getDn() {
+		return $this->dn;
+	}
+
+	/**
+	 * @param mixed $dn
+	 *
+	 * @return LdapToWp
+	 */
+	public function setDn( $dn ) {
+		$this->dn = $dn;
+
+		return $this;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getFilters() {
+		return $this->filters;
+	}
+
+	/**
+	 * @param mixed $filters
+	 *
+	 * @return LdapToWp
+	 */
+	public function setFilters( $filters ) {
+		$this->filters = $filters;
+
+		return $this;
 	}
 
 	/**
