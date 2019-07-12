@@ -55,7 +55,11 @@ class Settings {
 
 
 	public static function getMatch() {
-		return get_option( static::getConfigNameOfMatch() );
+		$match = get_option( static::getConfigNameOfMatch() );
+
+		return array_filter( $match, function ( $m ) {
+			return $m['Ldap'] && $m['wp'];
+		} );
 	}
 
 	public static function getConfigNameOfMatch() {

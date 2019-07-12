@@ -18,3 +18,7 @@ define( 'WPADLDAP2_DIR', __DIR__ );
 if ( is_admin() ) {
 	\WpAdldap2\Admin\Init::factory();
 }
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	\WpAdldap2\Command::factory()->register();
+
+}

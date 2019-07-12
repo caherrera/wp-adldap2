@@ -46,7 +46,7 @@ class AdminForm extends HtmlForm {
 		$filters = (array) Settings::getFilters();
 
 		return $this->table( [
-			$this->inputMultiples( Settings::getConfigNameOfFilters(), "Match", $match, [ 'Ldap' => '', 'wp' => '' ] ),
+			$this->inputMultiples( Settings::getConfigNameOfMatch(), "Match", $match, [ 'Ldap' => '', 'wp' => '' ] ),
 			$this->inputMultiples( Settings::getConfigNameOfFilters(), "Extra Conditions", $filters, [ 'field' => '', 'operator' => '', 'value' => '' ] )
 
 

@@ -35,6 +35,7 @@ class AdminTestConn {
 		$results[] = [ 'title' => 'Has port       ', 'result' => ( $ok = ! empty( Settings::getPort() ) ) ? 'OK' : 'Missing', 'ok' => $ok ];
 		$results[] = [ 'title' => 'Has map declared between ldap fields and wordpress fields        ', 'result' => ( $ok = ! empty( Settings::getMap() ) ) ? 'OK' : 'Missing', 'ok' => $ok ];
 		$results[] = [ 'title' => 'Has declared filter map      ', 'result' => ( $ok = ! empty( Settings::getMatch() ) ) ? 'OK' : 'Missing', 'ok' => $ok ];
+//		$results[] = [ 'title' => 'Records Founds', 'result' => ( $ok = ! empty( Settings::getMatch() ) ) ? 'OK' : 'Missing', 'ok' => $ok ];
 
 
 		foreach ( Settings::getHosts() as $h => $host ) {

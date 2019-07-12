@@ -6,7 +6,7 @@ use Adldap\Connections\ProviderInterface;
 use Adldap\Models\User;
 use BP_XProfile_Field;
 use BP_XProfile_ProfileData;
-use WP_User_Query;
+use WpAdldap2\Cache;
 use WpAdldap2\Settings;
 use WpAdldap2\UserProfile;
 use WpAdldap2\WpAdldap2;
@@ -57,7 +57,7 @@ class LdapToWp {
 		$filters = ( array_filter( $this->getFilters() ) );
 
 
-		if ( ! $results = wp_cache_get( 'users', WPADLDAP2 ) ) {
+		if ( ! $results = Cache::get() ) {
 			$query = $this->getProvider()->search()->users();
 			$dn[]  = $query->getDn();
 			$dn    = implode( ',', $dn );
@@ -70,8 +70,8 @@ class LdapToWp {
 				}
 			}
 
-			$resultss = $query->get();
-			wp_cache_set( 'users', $results, WPADLDAP2, Settings::getCacheExpire() );
+			$results = $query->get();
+			Cache::set( $results );
 		}
 
 
@@ -134,10 +134,7 @@ class LdapToWp {
 
 
 	public function getUsersFromWp() {
-		$users       = new WP_User_Query();
-		$users_found = $users->get_results();
-
-		return $users_found;
+		return get_users();
 	}
 
 	public function searchNewUsers( &$usersLdap, $usersWp ) {
