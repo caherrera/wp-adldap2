@@ -16,13 +16,11 @@ class AdminExploreLdap {
 		$p     = new AdminPageExploreLdap();
 		$map   = array_filter( Settings::getMap() );
 		$list  = $this->getList();
+		$first = current( $list );
 		$thead = $p->thead( [
 			$p->tr( array_map( function ( $ldap ) use ( $p ) {
 				return $p->th( $ldap );
-			}, $map ) ),
-			$p->tr( array_map( function ( $ldap ) use ( $p ) {
-				return $p->th( $ldap );
-			}, array_keys( $map ) ) ),
+			}, array_keys( $first ) ) ),
 		] );
 		$tbody = array_map( function ( $user ) use ( $p ) {
 			$tr = array_map( function ( $attr ) use ( $p ) {
@@ -48,11 +46,7 @@ class AdminExploreLdap {
 			$users    = [];
 			$map      = array_filter( Settings::getMap() );
 			foreach ( $ldap->getUsersFromLdap() as $item ) {
-				$user = [];
-				foreach ( $map as $field ) {
-					$user[ $field ] = $item->getAttribute( $field );
-				}
-
+				$user         = [];
 				$user['wpid'] = array_map( function ( $u ) use ( $ldap, $item ) {
 					$bool = true;
 					foreach ( $ldap->getMatch() as $keys ) {
@@ -63,7 +57,13 @@ class AdminExploreLdap {
 						return $u->ID;
 					}
 				}, $wp_users );
-				$users[]      = $user;
+
+				foreach ( $map as $field ) {
+					$user[ $field ] = $item->getAttribute( $field );
+				}
+
+
+				$users[] = $user;
 			}
 
 
