@@ -3,6 +3,7 @@
 namespace WpAdldap2\Admin;
 
 use WpAdldap2\Admin\Views\AdminPage;
+use WpAdldap2\Cache;
 use WpAdldap2\Traits\TraitHasFactory;
 
 class AdminSettings {
@@ -11,6 +12,7 @@ class AdminSettings {
 	public function settingsPage() {
 		if ( $_POST ) {
 			$this->saveSettings();
+			Cache::flush();
 		}
 		echo new AdminPage();
 

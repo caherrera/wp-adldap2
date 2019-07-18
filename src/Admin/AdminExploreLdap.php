@@ -13,29 +13,11 @@ class AdminExploreLdap {
 
 	public function settingsPage() {
 
-		$p     = new AdminPageExploreLdap();
-		$map   = array_filter( Settings::getMap() );
-		$list  = $this->getList();
-		$first = current( $list );
-		$thead = $p->thead( [
-			$p->tr( array_map( function ( $ldap ) use ( $p ) {
-				return $p->th( $ldap );
-			}, array_keys( $first ) ) ),
-		] );
-		$tbody = array_map( function ( $user ) use ( $p ) {
-			$tr = array_map( function ( $attr ) use ( $p ) {
-				return $p->td( $attr );
-			}, $user );
+		$p = new AdminPageExploreLdap();
+		$p->setList( $this->getList() );
 
-			return $p->tr( $tr );
-		}, $list );
-		$tbody = $p->tbody( $tbody );
-
-		$p->add( $p->table( [
-			$thead,
-			$tbody
-		] ) );
 		echo $p;
+
 
 	}
 
@@ -54,12 +36,21 @@ class AdminExploreLdap {
 					}
 
 					if ( $bool ) {
-						return $u->ID;
+						return '<a href="'. get_edit_user_link( $u->ID ) .'">'. esc_attr( $u->user_nicename ) .'</a>';
 					}
 				}, $wp_users );
 
 				foreach ( $map as $field ) {
-					$user[ $field ] = $item->getAttribute( $field );
+					if ( $field === 'manager' ) {
+						if ( $manager = $ldap->getManager( $item ) ) {
+							$user[ $field ] = $manager->getAttribute( 'displayname' );
+						} else {
+							$user[ $field ] = '';
+						}
+					} else {
+						$user[ $field ] = $item->getAttribute( $field );
+					}
+
 				}
 
 

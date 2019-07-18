@@ -11,15 +11,24 @@ class AdminPage extends HtmlForm {
 	protected $_html = [];
 
 	public function __construct( $attr = [], $content = [] ) {
-		if ( $content ) {
-			parent::__construct( $attr, $content );
-		} else {
-			$this->add( $this->page( [
+		if ( ! $content ) {
+
+
+			$content[] = $this->page( [
 				$this->title( 'WP-ADLDAP2' ),
 				$this->p( 'Sync your Active Directory With Wordpress' ),
 				$this->tabs()
-			] ) );
+			] );
 		}
+		parent::__construct( $attr, $content );
+
+	}
+
+	public function enqueue_jquery_ui() {
+		parent::enqueue_jquery_ui();
+		wp_enqueue_script('jquery-ui-tabs');
+		wp_add_inline_script(WPADLDAP2,"$( function() { $( \"#tabs\" ).tabs(); } );");
+
 
 	}
 

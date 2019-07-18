@@ -36,6 +36,15 @@ class LdapToWp {
 
 	}
 
+	public function getManager( User $user ) {
+		$managerDn = $user->getAttribute( 'manager' );
+		$ad        = new WpAdldap2();
+		$provider  = $ad->connect();
+		$manager   = $provider->search()->users()->setDn( $managerDn[0] )->first();
+
+		return $manager;
+	}
+
 	public function sync() {
 		$usersLdap = $this->getUsersFromLdap();
 		$usersWp   = $this->getUsersFromWp();

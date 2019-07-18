@@ -92,7 +92,6 @@ namespace WpAdldap2\Admin\Helpers;
  * @method HtmlTag table( $content, Array $attr = [] )
  * @method HtmlTag thead( $content, Array $attr = [] )
  * @method HtmlTag td( $content, Array $attr = [] )
- * @method HtmlTag !DOCTYPE( $content, Array $attr = [] )
  * @method HtmlTag a( $content, Array $attr = [] )
  * @method HtmlTag address( $content, Array $attr = [] )
  * @method HtmlTag app( $content, Array $attr = [] )
@@ -161,8 +160,9 @@ class HtmlTag {
 
 	public function wrap( $content, $tag = 'div', $attr = [] ) {
 		$array_to_attr = $this->arrayToAttr( $attr );
+		$html          = sprintf( "<%s %s>%s</%s>", $tag, $array_to_attr, $content instanceof HtmlTag ? $content : new HtmlTag( [], $content ), $tag );
 
-		return sprintf( "<%s %s>%s</%s>", $tag, $array_to_attr, $content instanceof HtmlForm ? $content : new HtmlForm( $content ), $tag );
+		return $html;
 
 	}
 
@@ -175,5 +175,13 @@ class HtmlTag {
 		$arr = implode( " ", $arr );
 
 		return $arr;
+	}
+
+	function __toString() {
+		$string = implode( '', array_map( function ( $html ) {
+			return (string) $html;
+		}, (array) $this->_html ) );
+
+		return $string;
 	}
 }
