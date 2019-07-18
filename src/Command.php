@@ -10,7 +10,7 @@ class Command {
 	use TraitHasFactory;
 
 	function register() {
-		WP_CLI::add_command( WPADLDAP2, [ $this, 'run' ] );
+		WP_CLI::add_command( strtolower(WPADLDAP2) .' sync', [ $this, 'run' ] );
 	}
 
 	function run() {
