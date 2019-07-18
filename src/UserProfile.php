@@ -13,11 +13,13 @@ use WpAdldap2\Traits\TraitHasFactory;
  */
 class UserProfile {
 	use TraitHasFactory;
+	const WP_USER_FIELDS = [ 'user_login', 'username', 'email', 'nicename', 'nickname', 'name', 'display_name', 'first_name', 'last_name' ];
 
 	public function getUserFields( $extras = true ) {
-		$wordpress_fields = array_map( function ( $f ) {
-			return (object) [ 'id' => $f, 'name' => $f, 'type' => 'textbox' ];
-		}, [ 'username', 'email', 'nicename', 'nickname', 'name', 'display_name', 'first_name', 'last_name' ] );
+		$wordpress_fields = [];
+		foreach ( self::WP_USER_FIELDS as $f ) {
+			$wordpress_fields [ $f ] = (object) [ 'id' => $f, 'name' => $f, 'type' => 'textbox' ];
+		}
 		if ( $extras && is_plugin_active( 'buddypress/bp-loader.php' ) ) {
 			$xprofile = $this->xprofile_fetch_fields();
 		} else {
@@ -34,8 +36,8 @@ class UserProfile {
 			foreach ( $profile_groups as $profile_group ) {
 				if ( ! empty( $profile_group->fields ) ) {
 					foreach ( $profile_group->fields as $field ) {
-						if ($field->name!='name') {
-							$fields[] = (object) [ 'id' => $field->id, 'name' => $field->name, 'type' => $field->type ];
+						if ( $field->name != 'name' ) {
+							$fields[ $field->name ] = (object) [ 'id' => $field->id, 'name' => $field->name, 'type' => $field->type ];
 						}
 					}
 				}

@@ -22,20 +22,20 @@ class AdminPageExploreLdap extends HtmlForm {
 
 	public function print() {
 
-		$p       = new HtmlTag();
-		$map     = array_flip( array_filter( Settings::getMap() ) );
-		$list    = $this->getList();
-		$first   = current( $list );
-		$first   = array_keys( $first );
-		$first[] = '#';
-		$thead   = $p->thead( [
+		$p     = new HtmlTag();
+		$map   = array_flip( array_filter( Settings::getMap() ) );
+		$list  = $this->getList();
+		$first = current( $list );
+		$first = array_keys( $first );
+		array_unshift( $first, '#' );
+		$thead = $p->thead( [
 			$p->tr( array_map( function ( $ldap ) use ( $map, $p ) {
 				return $p->th( ( $map[ $ldap ] ?? '' ) . $p->small( $ldap ) );
 			}, $first ) ),
 		] );
 
 
-		$tbody = $p->tbody( $this->printTbody($list) );
+		$tbody = $p->tbody( $this->printTbody( $list ) );
 
 		$this->add( $p->table( [
 			$thead,
