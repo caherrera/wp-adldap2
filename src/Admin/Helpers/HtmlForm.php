@@ -6,13 +6,9 @@ namespace WpAdldap2\Admin\Helpers;
  * Class HtmlForm
  *
  * @package WpAdldap2\Admin
- * @method HtmlForm p( $content, Array $attr = [] )
- * @method HtmlForm td( $content, Array $attr = [] )
- * @method HtmlForm th( $content, Array $attr = [] )
  */
-class HtmlForm {
+class HtmlForm extends HtmlTag {
 
-	protected $_html = [];
 
 	public function __construct( $attr = [], $content = [] ) {
 		if ( $content ) {
@@ -22,24 +18,15 @@ class HtmlForm {
 		} elseif ( is_string( $attr ) ) {
 			$this->_html = [ $attr ];
 		}
-	}
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_jquery_ui' ] );
 
-	public function wrap( $content, $tag = 'div', $attr = [] ) {
-		$array_to_attr = $this->arrayToAttr( $attr );
-
-		return sprintf( "<%s %s>%s</%s>", $tag, $array_to_attr, $content instanceof HtmlForm ? $content : new HtmlForm( $content ), $tag );
 
 	}
 
-	private function arrayToAttr( $attr = [] ) {
-		$callback = function ( $key, $value ) {
-			return sprintf( "%s=\"%s\"", $key, $value );
-		};
 
-		$arr = array_map( $callback, array_keys( $attr ), $attr );
-		$arr = implode( " ", $arr );
+	public function enqueue_jquery_ui() {
+		wp_enqueue_script( 'jquery-ui-core' );
 
-		return $arr;
 	}
 
 	public function title( $title ) {
@@ -105,26 +92,10 @@ class HtmlForm {
 		return sprintf( "<p class='submit'><input type='submit' class='button button-primary' value='%s'></p>", $title );
 	}
 
-	function __toString() {
-		// TODO: Implement __toString() method.
-		$string = implode( '', array_map( function ( $html ) {
-			return (string) $html;
-		}, (array) $this->_html ) );
-
-		return $string;
-	}
 
 	public function form( $html ) {
 		return $this->wrap( $html, 'form', [ 'method' => "post", 'action' => "" ] );
 	}
 
-	public function add( $tag ) {
-		array_push( $this->_html, $tag );
-	}
 
-	public function __call( $name, $arguments ) {
-		$content = array_shift( $arguments );
-
-		return ( new self() )->wrap( $content, $name, $arguments ? $arguments[0] : [] );
-	}
 }
