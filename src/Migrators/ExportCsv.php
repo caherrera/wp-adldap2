@@ -1,21 +1,22 @@
 <?php
 
-namespace WpAdldap2\Admin;
+namespace WpAdldap2\Migrators;
 
-use Exception;
-use WpAdldap2\Migrators\LdapToWp;
+use FullCsv\CsvWriter;
 use WpAdldap2\Traits\TraitHasFactory;
 
-class AdminExport {
+class ExportCsv {
 	use TraitHasFactory;
 
-	public function settingsPage() {
-
-		$ldap  = new LdapToWp();
-		$users = $ldap->getUsersFromWp();
+	public function export() {
+		$users = apply_filters( 'wpadldap2_wp_users_list', [] );
+		if ( ! $users ) {
+			$ldap  = new LdapToWp();
+			$users = $ldap->getUsersFromWp();
+		}
 
 		$this->download_send_headers( "data_export_" . date( "Y-m-d" ) . ".csv" );
-		echo $this->array2csv( $users );
+		$this->array2csv( $users );
 		die();
 
 
@@ -39,31 +40,20 @@ class AdminExport {
 	}
 
 	function array2csv( array &$array ) {
-		if ( count( $array ) == 0 ) {
-			return null;
-		}
-		ob_start();
-		$df = fopen( "php://output", 'w' );
-		fputcsv( $df, array_keys( reset( $array ) ) );
+
+		$csv = new CsvWriter( $filename = wp_tempnam( 'adldap2_user_export-csv', wp_get_upload_dir()['basedir'].'/' ) );
+		$csv->open();
+		reset( $array );
+		$keys = array_keys( (array) current( $array ) );
+		reset( $array );
+		$csv->setHeader( $keys );
 		foreach ( $array as $row ) {
-			fputcsv( $df, $row );
+			$csv->addRow( (array) $row );
 		}
-		fclose( $df );
-
-		return ob_get_clean();
-	}
-
-	public function getList() {
-		try {
-			$ldap  = new LdapToWp();
-			$users = $ldap->syncListUsers();
+		$csv->close();
+		echo file_get_contents( $filename );
 
 
-			return $users;
-
-		} catch ( Exception $e ) {
-			wp_die( $e->getMessage() );
-		}
 	}
 
 
