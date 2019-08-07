@@ -55,7 +55,6 @@ namespace WpAdldap2\Admin\Helpers;
  * @method HtmlTag var( $content, Array $attr = [] )
  * @method HtmlTag wbr( $content, Array $attr = [] )
  * @method HtmlTag xmp( $content, Array $attr = [] )
- * @method HtmlTag input( $content, Array $attr = [] )
  * @method HtmlTag isindex( $content, Array $attr = [] )
  * @method HtmlTag kbd( $content, Array $attr = [] )
  * @method HtmlTag label( $content, Array $attr = [] )
@@ -175,6 +174,14 @@ class HtmlTag {
 		$arr = implode( " ", $arr );
 
 		return $arr;
+	}
+
+	public function oneWrap( $tag = 'div', $attr = [] ) {
+		$array_to_attr = $this->arrayToAttr( $attr );
+		$html          = sprintf( "<%s %s />", $tag, $array_to_attr );
+
+		return $html;
+
 	}
 
 	function __toString() {
