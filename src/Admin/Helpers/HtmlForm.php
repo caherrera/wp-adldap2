@@ -97,5 +97,15 @@ class HtmlForm extends HtmlTag {
 		return $this->wrap( $html, 'form', [ 'method' => "post", 'action' => "" ] );
 	}
 
+	public function hidden( array $attr = [] ) {
+		return $this->input( 'hidden', $attr );
+	}
+
+	public function input( $type = 'text', array $attr = [] ) {
+		$attr['type'] = $type;
+
+		return $this->oneWrap( 'input', $attr );
+	}
+
 
 }
