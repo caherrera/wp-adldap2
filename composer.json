@@ -29,7 +29,8 @@
     "php": ">=7.0",
     "ext-ldap": "*",
     "ext-json": "*",
-    "adldap2/adldap2": "^10.0"
+    "adldap2/adldap2": "^10.0",
+    "caherrera/fullcsv": "^2.0"
   },
   "require-dev": {
     "phpunit/phpunit": "~6.0",
