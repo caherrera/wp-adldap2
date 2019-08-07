@@ -2,36 +2,23 @@
 
 namespace WpAdldap2\Admin;
 
-use Exception;
-use WpAdldap2\Admin\Views\AdminPageExploreLdap;
-use WpAdldap2\Migrators\LdapToWp;
-use WpAdldap2\Settings;
+use WpAdldap2\Admin\Helpers\HtmlForm;
 use WpAdldap2\Traits\TraitHasFactory;
 
-class AdminExploreLdap {
+class AdminExport {
 	use TraitHasFactory;
 
 	public function settingsPage() {
 
-		$p = new AdminPageExploreLdap();
-		$p->setList( $this->getList() );
+		$page = new HtmlForm();
+		$page->add( $page->wrap( [
+			$page->title( 'Export WP Users' ),
+			$page->hidden( [ 'name' => 'action', 'value' => 'adldap2_export_wp_users' ] ),
+			$page->submit( 'Download Wordpress Users' )
+		], 'form', [ 'method' => 'post', 'action' => admin_url( 'admin-post.php' ) ] ) );
 
-		echo $p;
+		echo $page;
 
-
-	}
-
-	public function getList() {
-		try {
-			$ldap     = new LdapToWp();
-			$users    = $ldap->syncListUsers();
-
-
-			return $users;
-
-		} catch ( Exception $e ) {
-			wp_die( $e->getMessage() );
-		}
 	}
 
 
