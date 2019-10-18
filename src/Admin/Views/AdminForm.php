@@ -33,12 +33,25 @@ class AdminForm extends HtmlForm {
 
 	public function printFieldsToSync() {
 		//username	email	nicename	nickname	Name	display_name	first_name	last_name	Cargo	Sucursal	Ubicación	Orden	Dependencia	Dependencia 2	Aniversario en Renta Nacional	Cumpleaños	Anexo	Asistente
-		return $this->table( array_map( function ( $f ) {
+		$rows = array_map( function ( $f ) {
 			$name = $f->name;
 
 			return $this->inputSetting( Settings::getConfigNameOfMap() . "[$name]", $name, Settings::getADField( $name ), '' );
 
-		}, ( new UserProfile )->getUserFields() ) );
+		}, ( new UserProfile )->getUserFields() );
+
+		return $this->table( [
+			$this->thead( $this->tr( [ $this->th( 'Wordpress' ), $this->th( 'Ldap' ) ] ) ),
+			$this->tbody( $rows )
+		] );
+	}
+
+	public function printHierarchy() {
+		$hierarchy = Settings::getHierarchy();
+
+		return $this->table( [
+			$this->inputSetting( Settings::getConfigNameOfHierarchy(), 'Hierarchy', $hierarchy ?: '', '' )
+		] );
 	}
 
 	public function printFieldsToMatch() {

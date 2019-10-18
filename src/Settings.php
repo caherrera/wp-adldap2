@@ -8,6 +8,7 @@ namespace WpAdldap2;
  * @package WpAdldap2
  */
 class Settings {
+	const CONFIG_UPDATE_AVATAR = 'update_avatar';
 	const CONFIG_HOSTS = 'hosts';
 	const CONFIG_BASEDN = 'base_dn';
 	const CONFIG_USERNAME = 'username';
@@ -18,6 +19,7 @@ class Settings {
 	const FILTERS = 'filters';
 	const DN = 'dn';
 	const CACHE_EXPIRE = 'cache_expire';
+	const HIERARCHY = 'hierarchy';
 
 
 	public static function getHosts() {
@@ -26,6 +28,22 @@ class Settings {
 
 	public static function getConfigNameOfHosts() {
 		return WPADLDAP2 . '_' . Settings::CONFIG_HOSTS;
+	}
+
+	public static function getHierarchy() {
+		return get_option( static::getConfigNameOfHierarchy() );
+	}
+
+	public static function getConfigNameOfHierarchy() {
+		return WPADLDAP2 . '_' . Settings::HIERARCHY;
+	}
+
+	public static function getUpdateAvatar() {
+		return get_option( static::getConfigNameOfUpdateAvatar() );
+	}
+
+	public static function getConfigNameOfUpdateAvatar() {
+		return WPADLDAP2 . '_' . Settings::CONFIG_UPDATE_AVATAR;
 	}
 
 

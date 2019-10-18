@@ -24,14 +24,6 @@ class AdminPage extends HtmlForm {
 
 	}
 
-	public function enqueue_jquery_ui() {
-		parent::enqueue_jquery_ui();
-		wp_enqueue_script('jquery-ui-tabs');
-		wp_add_inline_script(WPADLDAP2,"$( function() { $( \"#tabs\" ).tabs(); } );");
-
-
-	}
-
 	public function page( $html ) {
 		return $this->wrap( $this->form( $html ), 'div', [ 'class' => 'wrap' ] );
 	}
@@ -42,6 +34,7 @@ class AdminPage extends HtmlForm {
 			new HtmlTab( 'Filters', ( new AdminForm() )->printLdapFilters() ),
 			new HtmlTab( 'Fields to Sync', ( new AdminForm() )->printFieldsToSync() ),
 			new HtmlTab( 'Fields to Match', ( new AdminForm() )->printFieldsToMatch() ),
+			new HtmlTab( 'Hierarchy', ( new AdminForm() )->printHierarchy() ),
 		];
 
 		$ul   = array_map( function ( HtmlTab $tab ) {

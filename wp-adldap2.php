@@ -14,6 +14,8 @@ if ( ! is_dir( __DIR__ . '/vendor' ) ) {
 require_once __DIR__ . '/vendor/autoload.php';
 define( 'WPADLDAP2', 'WPADLDAP2' );
 define( 'WPADLDAP2_DIR', __DIR__ );
+define( 'WPADLDAP2_PLUGIN', __FILE__ );
+
 
 if ( is_admin() ) {
 	\WpAdldap2\Admin\Init::factory();

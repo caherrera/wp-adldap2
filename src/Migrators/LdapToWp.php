@@ -137,12 +137,14 @@ class LdapToWp {
 				}
 				$this->updateXprofileData( $wpid, $item );
 			}
+//			$this->updateThumb( $wpid, $item );
 
 
 			foreach ( $map as $field ) {
-				if ( $field === 'manager' ) {
+				if ( $field === Settings::getHierarchy() ) {
 					if ( $manager = $this->getManager( $item ) ) {
-						$user[ $field ] = $manager->getAttribute( 'displayname' );
+						$name_manager   = $manager->getAttribute( 'displayname' );
+						$user[ $field ] = current( $name_manager );
 					} else {
 						$user[ $field ] = '';
 					}
@@ -393,6 +395,21 @@ class LdapToWp {
 		return $manager;
 	}
 
+	public function updateThumb( $user_id, User $adUser ) {
+		if ( $this->isReplacingAvatar() || ( ! $this->isReplacingAvatar() && ! bp_get_user_has_avatar( $user_id ) ) ) {
+
+			$imageString = $adUser->getThumbnail();
+			$tempFile    = tempnam( bp_core_avatar_handle_upload() . '/', $user_id );
+			file_put_contents( $tempFile, $imageString );
+			$finfo = new finfo( FILEINFO_MIME_TYPE );
+			$mime  = explode( ';', $finfo->file( $tempFile ) );
+			echo '<img src="data:' . $mime[0] . ';base64,' . base64_encode( $imageString ) . '"/>';
+		}
+	}
+
+	public function isReplacingAvatar() {
+		return ( ! empty( $s = Settings::getUpdateAvatar() ) ) || $s;
+	}
 
 	/**
 	 * @return mixed

@@ -18,16 +18,11 @@ class HtmlForm extends HtmlTag {
 		} elseif ( is_string( $attr ) ) {
 			$this->_html = [ $attr ];
 		}
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_jquery_ui' ] );
 
 
 	}
 
 
-	public function enqueue_jquery_ui() {
-		wp_enqueue_script( 'jquery-ui-core' );
-
-	}
 
 	public function title( $title ) {
 		return "<h2>$title</h2>";
