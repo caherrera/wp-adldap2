@@ -121,36 +121,27 @@ class LdapToWp {
 	public function syncListUsers( $updateMatches = false, $insertNews = false ) {
 		$users = [];
 		$map   = array_filter( $this->getMap() );
-		foreach ( $this->getUsersFromLdap() as $item ) {
+		foreach ( $this->getUsersFromLdap() as $AdLdapUser ) {
 			$isNew = false;
 			$user  = [];
-			$wpid  = $this->searchWPUser( $item );
+			$wpid  = $this->searchWPUser( $AdLdapUser );
 			if ( $insertNews && ! $wpid ) {
-				$wpid  = $this->createWpUser( $item );
+				$wpid  = $this->createWpUser( $AdLdapUser );
 				$isNew = true;
 			}
 			$user['wpid'] = $wpid;
 
 			if ( $updateMatches ) {
 				if ( ! $isNew ) {
-					$this->updateUserData( $wpid, $item );
+					$this->updateUserData( $wpid, $AdLdapUser );
 				}
-				$this->updateXprofileData( $wpid, $item );
+				$this->updateXprofileData( $wpid, $AdLdapUser );
 			}
 //			$this->updateThumb( $wpid, $item );
 
 
 			foreach ( $map as $field ) {
-				if ( $field === Settings::getHierarchy() ) {
-					if ( $manager = $this->getManager( $item ) ) {
-						$name_manager   = $manager->getAttribute( 'displayname' );
-						$user[ $field ] = current( $name_manager );
-					} else {
-						$user[ $field ] = '';
-					}
-				} else {
-					$user[ $field ] = $item->getAttribute( $field );
-				}
+				$user[ $field ] = $this->getAdValueToWpFormat( $field, $AdLdapUser );
 
 			}
 
@@ -352,12 +343,13 @@ class LdapToWp {
 				wp_die( "Field $xprofile_field does not exists" );
 			}
 
-			if ( $xprofile_field === 'manager' ) {
-				if ( $manager = $this->getManager( $adUser ) ) {
-					$value = $manager->getAttribute( 'displayname' );
-				} else {
-					$value = '';
-				}
+			if ( $adField === Settings::getHierarchy() ) {
+//				if ( $manager = $this->getManager( $adUser ) ) {
+//					$value = $manager->getAttribute( 'displayname' );
+//				} else {
+//					$value = '';
+//				}
+				$value = $this->getAdValueToWpFormat( $adField, $adUser );
 			} else {
 				$value = $this->getAttributeFromAdUser( $adUser, $adField );
 			}
@@ -384,6 +376,21 @@ class LdapToWp {
 		$this->xprofile_fields_in_map = $xprofile_fields_in_map;
 
 		return $this;
+	}
+
+	public function getAdValueToWpFormat( $field, $ldapUser ) {
+		if ( $field === Settings::getHierarchy() ) {
+			if ( $manager = $this->getManager( $ldapUser ) ) {
+				$name_manager = $manager->getAttribute( 'displayname' );
+				$value        = current( $name_manager );
+			} else {
+				$value = '';
+			}
+		} else {
+			$value = current( (array) $ldapUser->getAttribute( $field ) );
+		}
+
+		return $value;
 	}
 
 	public function getManager( User $user ) {
