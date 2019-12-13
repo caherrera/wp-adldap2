@@ -13,7 +13,7 @@ use WpAdldap2\Traits\TraitHasFactory;
  */
 class UserProfile {
 	use TraitHasFactory;
-	const WP_USER_FIELDS = [ 'user_login', 'username', 'email', 'nicename', 'nickname', 'name', 'display_name', 'first_name', 'last_name' ];
+	const WP_USER_FIELDS = [ 'user_login', 'username', 'user_email', 'user_nicename', 'nickname', 'name', 'display_name', 'first_name', 'last_name' ];
 
 	public function getUserFields( $extras = true ) {
 		$wordpress_fields = [];
