@@ -10,13 +10,15 @@ class Command {
 	use TraitHasFactory;
 
 	function register() {
-		WP_CLI::add_command( strtolower(WPADLDAP2) .' sync', [ $this, 'run' ] );
+		WP_CLI::add_command( strtolower( WPADLDAP2 ) . ' sync', [ $this, 'run' ], [] );
 	}
 
-	function run() {
+	function run( $args, $assoc_args ) {
 
 		$migrate = new LdapToWp();
-		$migrate->sync();
+
+		$email = $args[0] ?? null;
+		$migrate->sync( $email ? [ [ 'mail', '=', $email ] ] : [] );
 
 	}
 }
