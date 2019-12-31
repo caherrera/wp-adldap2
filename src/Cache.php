@@ -4,12 +4,12 @@ namespace WpAdldap2;
 
 class Cache {
 
-	static function set( $users ) {
-		wp_cache_set( 'users', $users, WPADLDAP2, Settings::getCacheExpire() );
+	static function set( $users, $key = 'users' ) {
+		wp_cache_set( $key, $users, WPADLDAP2, Settings::getCacheExpire() );
 	}
 
-	static function get() {
-		return wp_cache_get( 'users', WPADLDAP2 );
+	static function get( $key = 'users' ) {
+		return wp_cache_get( $key, WPADLDAP2 );
 	}
 
 	static function flush() {

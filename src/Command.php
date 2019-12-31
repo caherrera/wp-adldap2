@@ -17,8 +17,16 @@ class Command {
 
 		$migrate = new LdapToWp();
 
-		$email = $args[0] ?? null;
-		$migrate->sync( $email ? [ [ 'mail', '=', $email ] ] : [] );
+		$ID = $args[0] ?? null;
+		if ( is_numeric( $ID ) ) {
+			$user = get_userdata( $ID );
+			$mail = $user->user_login;
+		} else {
+			$mail = $ID;
+
+		}
+
+		$migrate->sync( $mail ? [ [ 'field' => 'mail', 'operator' => '=', 'value' => $mail ] ] : [], [ 'include' => $ID ] );
 
 	}
 }

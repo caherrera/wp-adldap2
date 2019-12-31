@@ -111,17 +111,17 @@ class LdapToWp {
 		return $this;
 	}
 
-	public function sync() {
+	public function sync( $LdapFilters = [], $WpFilters = [] ) {
 
-		$this->syncListUsers( true, true );
+		$this->syncListUsers( true, true, $LdapFilters, $WpFilters );
 
 
 	}
 
-	public function syncListUsers( $updateMatches = false, $insertNews = false ) {
+	public function syncListUsers( $updateMatches = false, $insertNews = false, $LdapFilters = [], $WpFilters = [] ) {
 		$users = [];
 		$map   = array_filter( $this->getMap() );
-		foreach ( $this->getUsersFromLdap() as $AdLdapUser ) {
+		foreach ( $this->getUsersFromLdap( $LdapFilters ) as $AdLdapUser ) {
 			$isNew = false;
 			$user  = [];
 			$wpid  = $this->searchWPUser( $AdLdapUser );
@@ -149,20 +149,49 @@ class LdapToWp {
 			$users[] = $user;
 		}
 
+		$this->deleteWpUsers( $users, $WpFilters );
+
 
 		return $users;
 	}
 
+	public function deleteWpUsers($users=[],$WpFilters=[]) {
+
+		if (class_exists('dwul_user_register_ajax_call_back')) {
+			$dwul_user_register_ajax_call_back = new \dwul_user_register_ajax_call_back();
+
+			$wpid    = array_column( $users, 'wpid' );
+			$wpUsers = $this->getUsersFromWp( array_merge( $WpFilters, [ 'exclude' => $wpid ] ) );
+
+			foreach ( $wpUsers as $m ) {
+//				if ( ! in_array( $m->ID ) ) {
+					$dwul_user_register_ajax_call_back->dwul_action_callback( $m->ID );
+
+//				}
+			}
+
+
+//			$users_to_delete = get_users( array_merge( $WpFilters ) );
+
+			return $wpUsers;
+		}
+	}
+
 	/**
+	 * @param $extra_filters
+	 *
 	 * @return \Adldap\Query\Collection
 	 */
-	public function getUsersFromLdap() {
+	public function getUsersFromLdap( $extra_filters = [] ) {
 
-		$dn      = array_reverse( array_filter( $this->getDn() ) );
-		$filters = ( array_filter( $this->getFilters() ) );
+		$dn        = array_reverse( array_filter( $this->getDn() ) );
+		$filters   = array_values( array_filter( array_merge( $this->getFilters(), $extra_filters ), function ( $filter ) {
+			return isset( $filter['field'] ) && $filter['field'];
+		} ) );
+		$cache_key = md5( json_encode( $filters ) );
 
 
-		if ( ! $results = Cache::get() ) {
+		if ( ! $results = Cache::get( $cache_key ) ) {
 			$query = $this->getProvider()->search()->users();
 			$dn[]  = $query->getDn();
 			$dn    = implode( ',', $dn );
@@ -176,7 +205,7 @@ class LdapToWp {
 			}
 
 			$results = $query->get();
-			Cache::set( $results );
+			Cache::set( $results, $cache_key );
 		}
 
 
@@ -238,35 +267,16 @@ class LdapToWp {
 	}
 
 	public function searchWPUser( $item ) {
-		foreach ( $this->getUsersFromWp() as $u ) {
-			$bool = true;
-			foreach ( $this->getMatch() as $keys ) {
-				$bool = $bool && $item[ $keys['Ldap'] ] && $item[ $keys['Ldap'] ][0] == $u->{$keys['wp']};
-			}
-
-			if ( $bool ) {
-				return $u->ID;
-			}
-		}
-	}
-
-	public function getUsersFromWp() {
-		if ( ! $wp_users = $this->wp_users ) {
-			$wp_users = $this->setWpUsers( get_users() )->wp_users;
+		$args = [];
+		foreach ( $this->getMatch() as $keys ) {
+			$kldap        = $keys['Ldap'];
+			$kwp          = $keys['wp'];
+			$args[ $kwp ] = $item->getFirstAttribute( $kldap );
 		}
 
-		return $wp_users;
-	}
-
-	/**
-	 * @param \WP_User[] $wp_users
-	 *
-	 * @return LdapToWp
-	 */
-	public function setWpUsers( array $wp_users ): LdapToWp {
-		$this->wp_users = $wp_users;
-
-		return $this;
+		if ( $user = $this->getUsersFromWp( $args ) ) {
+			return $user[0]->ID;
+		}
 	}
 
 	/**
@@ -283,6 +293,30 @@ class LdapToWp {
 	 */
 	public function setMatch( $match ) {
 		$this->match = $match;
+
+		return $this;
+	}
+
+	public function getUsersFromWp( $args = [] ) {
+//		if ( ! $wp_users = $this->wp_users ) {
+		if ( isset( $args['user_login'] ) ) {
+			$args['login'] = $args['user_login'];
+			unset( $args['user_login'] );
+		}
+		$wp_users = $this->setWpUsers( get_users( $args ) )->wp_users;
+
+//		}
+
+		return $wp_users;
+	}
+
+	/**
+	 * @param \WP_User[] $wp_users
+	 *
+	 * @return LdapToWp
+	 */
+	public function setWpUsers( array $wp_users ): LdapToWp {
+		$this->wp_users = $wp_users;
 
 		return $this;
 	}
@@ -352,6 +386,7 @@ class LdapToWp {
 				$value = $this->getAdValueToWpFormat( $adField, $adUser );
 			} else {
 				$value = $this->getAttributeFromAdUser( $adUser, $adField );
+
 			}
 
 

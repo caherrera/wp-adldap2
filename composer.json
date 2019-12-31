@@ -1,6 +1,7 @@
 {
   "name": "caherrera/wp-adldap2",
   "type": "library",
+  "version": "1.0.0-rc",
   "description": "A WP LDAP Package for humans.",
   "keywords": [
     "active directory",
