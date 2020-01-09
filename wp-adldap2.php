@@ -22,7 +22,5 @@ if ( is_admin() ) {
 }
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	\WpAdldap2\Command::factory()->register();
-
+	add_filter( 'bp_xprofile_set_field_data_pre_validate', '\WpAdldap2\Filters\BpXprofileSetFieldDataPreValidate::filter', 10, 3 );
 }
-
-add_filter( 'bp_xprofile_set_field_data_pre_validate', '\WpAdldap2\Filters\BpXprofileSetFieldDataPreValidate::filter', 10, 3 );

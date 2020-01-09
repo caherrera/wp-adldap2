@@ -129,52 +129,40 @@ class LdapToWp {
 				$wpid  = $this->createWpUser( $AdLdapUser );
 				$isNew = true;
 			}
-			$user['wpid'] = $wpid;
 
-			if ( $updateMatches ) {
-				if ( ! $isNew ) {
-					$this->updateUserData( $wpid, $AdLdapUser );
+			if ( ! $wpid instanceof \WP_Error ) {
+
+
+				$user['wpid'] = $wpid;
+
+
+				if ( $updateMatches ) {
+					if ( ! $isNew ) {
+						$this->updateUserData( $wpid, $AdLdapUser );
+					}
+					$this->updateXprofileData( $wpid, $AdLdapUser );
 				}
-				$this->updateXprofileData( $wpid, $AdLdapUser );
-			}
 //			$this->updateThumb( $wpid, $item );
 
 
-			foreach ( $map as $field ) {
-				$user[ $field ] = $this->getAdValueToWpFormat( $field, $AdLdapUser );
+				foreach ( $map as $field ) {
+					$user[ $field ] = $this->getAdValueToWpFormat( $field, $AdLdapUser );
 
+				}
+				$users[] = $user;
+			} else {
+				$user = $wpid;
 			}
 
+			do_action( 'wp_adldap2_after_sync_ldap_user', $user, $AdLdapUser );
 
-			$users[] = $user;
+
 		}
 
-		$this->deleteWpUsers( $users, $WpFilters );
+//		$this->deleteWpUsers( $WpFilters );
 
 
 		return $users;
-	}
-
-	public function deleteWpUsers($users=[],$WpFilters=[]) {
-
-		if (class_exists('dwul_user_register_ajax_call_back')) {
-			$dwul_user_register_ajax_call_back = new \dwul_user_register_ajax_call_back();
-
-			$wpid    = array_column( $users, 'wpid' );
-			$wpUsers = $this->getUsersFromWp( array_merge( $WpFilters, [ 'exclude' => $wpid ] ) );
-
-			foreach ( $wpUsers as $m ) {
-//				if ( ! in_array( $m->ID ) ) {
-					$dwul_user_register_ajax_call_back->dwul_action_callback( $m->ID );
-
-//				}
-			}
-
-
-//			$users_to_delete = get_users( array_merge( $WpFilters ) );
-
-			return $wpUsers;
-		}
 	}
 
 	/**
@@ -435,6 +423,23 @@ class LdapToWp {
 		$manager   = $provider->search()->users()->setDn( $managerDn[0] )->first();
 
 		return $manager;
+	}
+
+	public function deleteWpUsers( $WpFilters ) {
+
+		$wp_users = apply_filters( 'wp_adldap_users_to_delete', $this->getUsersFromWp( $WpFilters ) );
+		$dwul     = new \dwul_user_register_ajax_call_back();
+
+		foreach ( $wp_users as $wp_user ) {
+			$ad_user = $this->getUsersFromLdap( [ [ 'field' => 'mail', 'operator' => '=', 'value' => $wp_user->user_login ] ] );
+			if ( $ad_user ) {
+				$dwul->dwul_enable_user_id( $wp_user->ID );
+				do_action( 'wp_adldap_after_enable_wp_user', $wp_user );
+			} else {
+				$dwul->dwul_action_callback( $wp_user->ID );
+				do_action( 'wp_adldap_after_disable_wp_user', $wp_user );
+			}
+		}
 	}
 
 	public function updateThumb( $user_id, User $adUser ) {
