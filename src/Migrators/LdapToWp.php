@@ -154,7 +154,7 @@ class LdapToWp {
 				$user = $wpid;
 			}
 
-			do_action( 'wp_adldap2_after_sync_ldap_user', $user, $AdLdapUser );
+			do_action( 'wp_adldap2_after_sync_ldap_user', $user );
 
 
 		}
@@ -432,7 +432,7 @@ class LdapToWp {
 
 		foreach ( $wp_users as $wp_user ) {
 			$ad_user = $this->getUsersFromLdap( [ [ 'field' => 'mail', 'operator' => '=', 'value' => $wp_user->user_login ] ] );
-			if ( $ad_user ) {
+			if ( count($ad_user) ) {
 				$dwul->dwul_enable_user_id( $wp_user->ID );
 				do_action( 'wp_adldap_after_enable_wp_user', $wp_user );
 			} else {

@@ -15,7 +15,7 @@ class Command {
 		WP_CLI::add_command( strtolower( WPADLDAP2 ) . ' sync', [ $this, 'run' ], [] );
 	}
 
-	function printUserAfterProcess( $wpUser, $adLdapUser ) {
+	function printUserAfterProcess( $wpUser ) {
 		WP_CLI::print_value( $wpUser, $this->assoc_args );
 
 	}
@@ -47,8 +47,8 @@ class Command {
 		} else {
 			$mail = null;
 		}
-		add_action( 'wp_adldap2_after_sync_ldap_user', [ $this, 'printUserAfterProcess' ], 10, 2 );
-		add_action( 'wp_adldap_after_disable_wp_user', [ $this, 'printUserAfterProcess' ], 10, 2 );
+		add_action( 'wp_adldap2_after_sync_ldap_user', [ $this, 'printUserAfterProcess' ], 10, 1 );
+		add_action( 'wp_adldap_after_disable_wp_user', [ $this, 'printUserAfterProcess' ], 10, 1 );
 
 		$filterWP = $mail ? [ 'include' => $ID ] : [];
 
